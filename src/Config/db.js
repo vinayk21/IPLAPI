@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const logger = require("../Constants/logger");
-const Uri = process.env.MONGODBURI || 'mongodb://192.168.29.69:27017/IplTeam';
+const Uri = process.env.MONGODBURI || 'mongodb://127.0.0.1:27017/IplTeam';
 async function connectDB(){
   try{
     logger.info("Connecting To Database")
