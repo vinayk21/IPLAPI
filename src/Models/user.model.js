@@ -58,29 +58,43 @@ userSchema.pre("save", async function(next){
 })
 
 userSchema.methods.isPasswordCorrect = async function(password){
-  return await bcrypt.compare(password,this.password)
+  return await bcrypt.compare(String(password),this.password)
 }
 
-userSchema.methods.accsessToken = async function(){
-    jwt.sign({
-        _id : this._id,
-        email:this.email,
-        username:this.username,
-        fullname:this.fullname
-    },
-    process.env.ACCSESS_TOKEN_SECRET,
-    {expireIn: process.env.ACCSESS_TOKEN_EXPIRY}
-)
-}
+userSchema.methods.accsessToken = async function() {
+    try {
+        const token = jwt.sign(
+            {
+                _id: this._id,
+                email: this.email,
+                username: this.username,
+                fullname: this.fullname
+            },
+            process.env.ACCSESS_TOKEN_SECRET,
+            { expiresIn: process.env.ACCSESS_TOKEN_EXPIRY }
+        );
+        console.log("Generated Access Token:", token);
+        return token;
+    } catch (error) {
+        console.error("Error generating access token:", error);
+        throw new Error("Failed to generate access token");
+    }
+};
 
-userSchema.methods.RefreshToken = async function(){
-    jwt.sign({
-        _id : this._id,
-    },
-    process.env.REFRESH_TOKEN,
-    {expireIn: process.env.REFRESH_TOKEN_EXPIRY}
-)
-}
+userSchema.methods.RefreshToken = async function() {
+    try {  
+        const token = jwt.sign(
+            { _id: this._id },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+        );
+        console.log("Generated Refresh Token:", token);
+        return token;
+    } catch (error) {
+        console.error("Error generating refresh token:", error);
+        throw new Error("Failed to generate refresh token");
+    }
+}; 
 
 const User = new mongoose.model("User",userSchema)
 

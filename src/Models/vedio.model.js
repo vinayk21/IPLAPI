@@ -13,7 +13,7 @@ const vedioSchema = new Schema({
     },
     title:{
         type:String,
-        require:true,
+        require:true, 
        },
     description:{
         type:String,
